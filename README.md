@@ -1,0 +1,1 @@
+# automated-project-doc-generator
