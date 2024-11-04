@@ -1,6 +1,10 @@
 # Asana Integration Project
 
-This project provides functions to integrate with Asana’s API, allowing you to fetch project and task data from your Asana workspace. The code includes error handling and unit tests to ensure functionality and resilience.
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Version](https://img.shields.io/badge/version-1.0.0-orange)
+
+This project provides functions to integrate with Asana’s API, allowing you to fetch project and task data from your Asana workspace. The code includes error handling, unit tests, and export functionality to ensure functionality and resilience.
 
 ## Table of Contents
 1. [Setup](#setup)
@@ -12,6 +16,7 @@ This project provides functions to integrate with Asana’s API, allowing you to
 7. [API Integration](#api-integration)
 8. [Usage Examples](#usage-examples)
 9. [Troubleshooting](#troubleshooting)
+10. [Common Issues](#common-issues)
 
 ---
 
@@ -150,5 +155,13 @@ This project utilizes the Asana API to fetch project and task data.
 
 - **Rate Limit Exceeded**:
   - Asana imposes rate limits on API requests. If you encounter this, reduce the frequency of requests and try again later.
+
+### Common Issues
+
+- **Export Errors**: 
+  - If you experience issues exporting documents, ensure you have installed `wkhtmltopdf` correctly. If you encounter a "missing dependency" error, double-check the installation steps.
+
+- **Template Rendering Issues**:
+  - If rendered templates do not appear as expected, ensure that placeholders in your Jinja2 templates match the keys provided in the `render_template` function. Validate your JSON data to confirm it includes the necessary fields.
 
 For additional support, refer to the [Asana API Documentation](https://developers.asana.com/docs/).
