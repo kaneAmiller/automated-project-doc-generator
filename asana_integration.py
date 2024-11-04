@@ -2,9 +2,9 @@ import asana
 import json
 from asana.rest import ApiException
 from pprint import pprint
+from jinja2 import Environment, FileSystemLoader
 
 # Asana API Token and Workspace ID
-# Replace these placeholders with your actual values
 api_token = "<YOUR_ASANA_API_TOKEN>"
 workspace_id = "<YOUR_WORKSPACE_ID>"
 
@@ -41,7 +41,7 @@ def fetch_projects_from_asana(api_token, workspace_id):
         return None
 
 # Enhanced function to fetch all tasks for a given project, parse task data, and filter by completion status
-def fetch_tasks_from_project(api_token, project_id, status_filter=None, save_to_file=False):
+def fetch_tasks_from_project(api_token, project_id, status_filter=None):
     # Create Asana Tasks API client
     api_client = create_asana_client(api_token)
     tasks_api = asana.TasksApi(api_client)
@@ -64,17 +64,55 @@ def fetch_tasks_from_project(api_token, project_id, status_filter=None, save_to_
             if status_filter is None or (status_filter == "completed" and task_info["status"]) or (status_filter == "incomplete" and not task_info["status"]):
                 tasks.append(task_info)
         
-        # Save tasks to a JSON file if requested
-        if save_to_file:
-            with open(f"tasks_{project_id}.json", "w") as file:
-                json.dump(tasks, file, indent=4)
-            print(f"Tasks saved to tasks_{project_id}.json")
-        
         return tasks
 
     except Exception as e:
         print(f"Exception when calling TasksApi->get_tasks_for_project: {e}")
         return None
+
+def render_template(api_token, workspace_id, project_id, template_name, output_format="html"):
+    """
+    Populates the specified template with project and task data from the Asana API.
+
+    :param api_token: Asana API token
+    :param workspace_id: Asana workspace ID
+    :param project_id: Project ID to fetch tasks from
+    :param template_name: Template file name ('project_template.html' or 'project_template.md')
+    :param output_format: Format to render ('html' or 'markdown')
+    :return: Rendered template as a string
+    """
+
+    # Initialize Jinja2 environment
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template(template_name)
+
+    # Fetch project data
+    project_data = fetch_projects_from_asana(api_token, workspace_id)
+
+    # Fetch task data
+    tasks = fetch_tasks_from_project(api_token, project_id)
+
+    # Find the specific project
+    project = next((p for p in project_data if p["id"] == project_id), None)
+
+    if project is None or tasks is None:
+        print("Error: Could not retrieve project or task data.")
+        return None
+
+    # Render the template with project data
+    rendered_template = template.render(
+        project_name=project["name"],
+        milestones=[],
+        tasks=tasks
+    )
+
+    # Save to output file with the specified format
+    output_filename = f"output/project_report.{output_format}"
+    with open(output_filename, "w") as file:
+        file.write(rendered_template)
+
+    print(f"Template rendered and saved to {output_filename}")
+    return rendered_template
 
 # Testing the functions
 if __name__ == "__main__":
@@ -85,17 +123,15 @@ if __name__ == "__main__":
         print("Projects retrieved from Asana:")
         for project in projects:
             pprint(project)
-    else:
-        print("No projects found or an error occurred.")
-    
-    # Fetch and display tasks for each project with enhanced features
-    if projects:
-        for project in projects:
-            print(f"\nFetching incomplete tasks for project '{project['name']}' (ID: {project['id']})...")
-            tasks = fetch_tasks_from_project(api_token, project["id"], status_filter="incomplete", save_to_file=True)
+            
+            # Fetch and display tasks for each project
+            print(f"\nFetching tasks for project '{project['name']}' (ID: {project['id']})...")
+            tasks = fetch_tasks_from_project(api_token, project["id"])
             if tasks:
                 print("Tasks retrieved from Asana:")
                 for task in tasks:
                     pprint(task)
             else:
                 print("No tasks found or an error occurred.")
+    else:
+        print("No projects found or an error occurred.")

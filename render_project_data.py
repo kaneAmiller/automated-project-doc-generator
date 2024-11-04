@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # Replace these placeholders with actual values
     api_token = "<YOUR_ASANA_API_TOKEN>"
     workspace_id = "<YOUR_WORKSPACE_ID>"
-    project_id = "<YOUR_PROJECT_ID>"
+    project_id = "<YOUR_PROJECT_ID>" 
 
     # Render HTML version with sample data
     render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html", use_sample_data=True)
