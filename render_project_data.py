@@ -80,6 +80,17 @@ def convert_html_to_pdf(html_file_path, output_pdf_path):
     except Exception as e:
         print(f"Error generating PDF: {e}")
 
+def save_markdown(rendered_template, output_md_path):
+    """
+    Saves the rendered Markdown template to a file.
+
+    :param rendered_template: The rendered Markdown template as a string
+    :param output_md_path: Path where the output Markdown file will be saved
+    """
+    with open(output_md_path, "w") as md_file:
+        md_file.write(rendered_template)
+    print(f"Markdown file saved to {output_md_path}")
+
 # Main execution for rendering both HTML and Markdown templates
 if __name__ == "__main__":
     # Replace these placeholders with actual values
@@ -89,8 +100,12 @@ if __name__ == "__main__":
 
     # Render HTML version with sample data
     render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html", use_sample_data=True)
+    
     # Render Markdown version with sample data
-    render_template(api_token, workspace_id, project_id, template_name="project_template.md", output_format="md", use_sample_data=True)
+    markdown_output = render_template(api_token, workspace_id, project_id, template_name="project_template.md", output_format="md", use_sample_data=True)
+
+    # Save the rendered Markdown to a file
+    save_markdown(markdown_output, "output/project_report.md")
 
     # Convert rendered HTML to PDF
     convert_html_to_pdf("output/project_report.html", "output/project_report.pdf")
