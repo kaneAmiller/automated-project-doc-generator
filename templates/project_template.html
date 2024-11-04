@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project_name }} Overview</title>
+</head>
+<body>
+    <h1>Project: {{ project_name }}</h1>
+    <h2>Milestones</h2>
+    <ul>
+        {% for milestone in milestones %}
+            <li>
+                <strong>{{ milestone.name }}</strong> - Due: {{ milestone.due_date }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.name }} - Status: {% if task.status %}Completed{% else %}Incomplete{% endif %}
+                {% if task.due_date %} (Due: {{ task.due_date }}){% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
