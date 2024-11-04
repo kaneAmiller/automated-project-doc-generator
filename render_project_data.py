@@ -7,32 +7,40 @@ def load_config():
     with open("config.json", "r") as config_file:
         return json.load(config_file)
 
-def render_template(api_token, workspace_id, project_id, template_name, output_format="html"):
+def render_template(api_token, workspace_id, project_id, template_name, output_format="html", use_sample_data=False):
     """
-    Populates the specified template with project and task data from the Asana API.
+    Populates the specified template with project and task data from the Asana API or sample data for testing.
 
     :param api_token: Asana API token
     :param workspace_id: Asana workspace ID
     :param project_id: Project ID to fetch tasks from
     :param template_name: Template file name ('project_template.html' or 'project_template.md')
     :param output_format: Format to render ('html' or 'markdown')
+    :param use_sample_data: Boolean to indicate whether to load sample data instead of real API data
     :return: Rendered template as a string
     """
+    
+    # Load sample data if specified
+    if use_sample_data:
+        with open("sample_data/sample_project.json") as project_file:
+            project_data = json.load(project_file)
+        
+        with open("sample_data/sample_tasks.json") as tasks_file:
+            tasks = json.load(tasks_file)
+    else:
+        # Fetch real project and task data from Asana
+        project_data = fetch_projects_from_asana(api_token, workspace_id)
+        tasks = fetch_tasks_from_project(api_token, project_id)
+
+        # Find the specific project by ID
+        project = next((p for p in project_data if p["id"] == project_id), None)
+        if project is None or tasks is None:
+            print("Error: Could not retrieve project or task data.")
+            return None
 
     # Initialize Jinja2 environment
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template(template_name)
-
-    # Fetch project and task data
-    project_data = fetch_projects_from_asana(api_token, workspace_id)
-    tasks = fetch_tasks_from_project(api_token, project_id)
-
-    # Find the specific project
-    project = next((p for p in project_data if p["id"] == project_id), None)
-    
-    if project is None or tasks is None:
-        print("Error: Could not retrieve project or task data.")
-        return None
 
     # Separate tasks into milestones and regular tasks based on keywords
     config = load_config()
@@ -45,7 +53,7 @@ def render_template(api_token, workspace_id, project_id, template_name, output_f
 
     # Render the template with project data
     rendered_template = template.render(
-        project_name=project["name"],
+        project_name=project_data["name"],
         milestones=milestones,
         tasks=regular_tasks
     )
@@ -60,13 +68,12 @@ def render_template(api_token, workspace_id, project_id, template_name, output_f
 
 # Main execution for rendering both HTML and Markdown templates
 if __name__ == "__main__":
-    # Replace these placeholders with your actual values
+    # Replace these placeholders with actual values if not using sample data
     api_token = "<YOUR_ASANA_API_TOKEN>"
     workspace_id = "<YOUR_WORKSPACE_ID>"
     project_id = "<YOUR_PROJECT_ID>"
 
-
-    # Render HTML version
-    render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html")
-    # Render Markdown version
-    render_template(api_token, workspace_id, project_id, template_name="project_template.md", output_format="md")
+    # Render HTML version with sample data
+    render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html", use_sample_data=True)
+    # Render Markdown version with sample data
+    render_template(api_token, workspace_id, project_id, template_name="project_template.md", output_format="md", use_sample_data=True)
