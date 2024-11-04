@@ -1,30 +1,50 @@
-import requests
+import asana
+from asana.rest import ApiException
+from pprint import pprint
 
-# Your Asana API Token (replace with the actual token)
-api_token = "your_asana_api_token_here"
+# Configure API client with your Asana API token
+def create_asana_client(api_token):
+    configuration = asana.Configuration()
+    configuration.access_token = api_token
+    api_client = asana.ApiClient(configuration)
+    return asana.ProjectsApi(api_client)
 
-# Function to set up headers for API requests
-def get_asana_headers(api_token):
-    return {
-        'Authorization': f'Bearer {api_token}',
-        'Content-Type': 'application/json'
-    }
-
-# Function to test the API connection by making a sample request
-def test_asana_connection(api_token):
-    headers = get_asana_headers(api_token)
+# Function to fetch all projects in a specific workspace and parse project names and IDs
+def fetch_projects_from_asana(api_token, workspace_id):
+    # Create Asana Projects API client
+    projects_api = create_asana_client(api_token)
+    
     try:
-        response = requests.get('https://app.asana.com/api/1.0/users/me', headers=headers)
-        # Check for a successful response
-        if response.status_code == 200:
-            print('Connection successful.')
-            print('User info:', response.json())
-        else:
-            print(f'Connection failed. Status code: {response.status_code}')
-            print('Response:', response.text)
-    except requests.exceptions.RequestException as e:
-        print(f'An error occurred: {e}')
+        # Specify the workspace in the opts dictionary
+        opts = {'workspace': workspace_id}
+        response_generator = projects_api.get_projects(opts=opts)
+        
+        # Convert the generator to a list and extract project names and IDs
+        projects = []
+        for project in response_generator:
+            project_info = {
+                "id": project["gid"],
+                "name": project["name"]
+            }
+            projects.append(project_info)
+        
+        return projects
 
-# Run the test
+    except ApiException as e:
+        print(f"Exception when calling ProjectsApi->get_projects: {e}")
+        return None
+
+# Testing the function
 if __name__ == "__main__":
-    test_asana_connection(api_token)
+    # Replace these with your actual API token and workspace ID
+    api_token = "<YOUR_ASANA_API_TOKEN>"
+    workspace_id = "<YOUR_WORKSPACE_ID>"
+
+    # Fetch and display projects
+    projects = fetch_projects_from_asana(api_token, workspace_id)
+    if projects:
+        print("Projects retrieved from Asana:")
+        for project in projects:
+            pprint(project)
+    else:
+        print("No projects found or an error occurred.")
