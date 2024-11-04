@@ -35,7 +35,7 @@ def fetch_projects_from_asana(api_token, workspace_id):
         
         return projects
 
-    except ApiException as e:
+    except Exception as e:
         print(f"Exception when calling ProjectsApi->get_projects: {e}")
         return None
 
@@ -71,7 +71,7 @@ def fetch_tasks_from_project(api_token, project_id, status_filter=None, save_to_
         
         return tasks
 
-    except ApiException as e:
+    except Exception as e:
         print(f"Exception when calling TasksApi->get_tasks_for_project: {e}")
         return None
 
