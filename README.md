@@ -7,7 +7,8 @@ This project provides functions to integrate with Asana’s API, allowing you to
 2. [Obtaining an Asana API Key](#obtaining-an-asana-api-key)
 3. [Configuration](#configuration)
 4. [Example Usage](#example-usage)
-5. [Troubleshooting](#troubleshooting)
+5. [Template Customization](#template-customization)
+6. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -70,6 +71,22 @@ To connect to the Asana API, you'll need a personal API token.
    tasks = fetch_tasks_from_project(api_token="<YOUR_ASANA_API_TOKEN>", project_id="<PROJECT_ID>", status_filter="incomplete")
    print("Incomplete Tasks:", tasks)
    ```
+
+### Template Customization
+
+This section provides guidance on how users can modify templates and customize their layout.
+
+1. **Modify Templates**:
+   - The templates for rendering project data are located in the `templates` folder. You can customize `project_template.html` and `project_template.md` to fit your styling needs.
+
+2. **Adding New Placeholders**:
+   - To add new placeholders, edit the Jinja2 templates directly. Placeholders must correspond to the keys passed in the `render_template` function. For example, if you want to display a project description, add a placeholder like `{{ project_description }}` in the template and ensure it's passed in the `render_template` call.
+
+3. **Supported Variables**:
+   - Here is a list of supported variables that can be used in the templates:
+     - `project_name`: The name of the project.
+     - `milestones`: A list of milestone tasks (contains task details).
+     - `tasks`: A list of regular tasks (contains task details).
 
 ### Troubleshooting
 
