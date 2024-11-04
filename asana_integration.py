@@ -4,6 +4,7 @@ from asana.rest import ApiException
 from pprint import pprint
 
 # Asana API Token and Workspace ID
+# Replace these placeholders with your actual values
 api_token = "<YOUR_ASANA_API_TOKEN>"
 workspace_id = "<YOUR_WORKSPACE_ID>"
 
