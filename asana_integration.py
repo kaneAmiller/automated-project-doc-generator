@@ -4,8 +4,8 @@ from asana.rest import ApiException
 from pprint import pprint
 
 # Asana API Token and Workspace ID
-api_token = "2/1208533161066134/1208682906089394:32e7b9720a1729fb25c2b57f50b05aaa"
-workspace_id = "1208533161066146"
+api_token = "<YOUR_ASANA_API_TOKEN>"
+workspace_id = "<YOUR_WORKSPACE_ID>"
 
 # Configure API client with your Asana API token
 def create_asana_client(api_token):
