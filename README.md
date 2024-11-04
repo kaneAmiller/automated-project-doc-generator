@@ -7,9 +7,11 @@ This project provides functions to integrate with Asana’s API, allowing you to
 2. [Obtaining an Asana API Key](#obtaining-an-asana-api-key)
 3. [Configuration](#configuration)
 4. [Example Usage](#example-usage)
-5. [Template Customization](#template-customization)
-6. [Exporting Documents](#exporting-documents)
-7. [Troubleshooting](#troubleshooting)
+5. [Exporting Documents](#exporting-documents)
+6. [Template Customization](#template-customization)
+7. [API Integration](#api-integration)
+8. [Usage Examples](#usage-examples)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -22,7 +24,7 @@ This project provides functions to integrate with Asana’s API, allowing you to
    ```
 
 2. **Install required packages**:
-   The project relies on the Asana Python client and `pytest` for testing:
+   The project relies on the Asana Python client, `pytest`, and `pdfkit` for testing and PDF conversion:
    ```bash
    pip install asana pytest pdfkit
    ```
@@ -53,7 +55,6 @@ To connect to the Asana API, you'll need a personal API token.
      for workspace in workspaces:
          print("Workspace name:", workspace["name"], "| Workspace ID:", workspace["gid"])
      ```
-   - Replace `"<YOUR_ASANA_API_TOKEN>"` with your actual token to list all accessible workspaces and their IDs.
 
 ### Example Usage
 
@@ -72,22 +73,6 @@ To connect to the Asana API, you'll need a personal API token.
    tasks = fetch_tasks_from_project(api_token="<YOUR_ASANA_API_TOKEN>", project_id="<PROJECT_ID>", status_filter="incomplete")
    print("Incomplete Tasks:", tasks)
    ```
-
-### Template Customization
-
-This section provides guidance on how users can modify templates and customize their layout.
-
-1. **Modify Templates**:
-   - The templates for rendering project data are located in the `templates` folder. You can customize `project_template.html` and `project_template.md` to fit your styling needs.
-
-2. **Adding New Placeholders**:
-   - To add new placeholders, edit the Jinja2 templates directly. Placeholders must correspond to the keys passed in the `render_template` function. For example, if you want to display a project description, add a placeholder like `{{ project_description }}` in the template and ensure it's passed in the `render_template` call.
-
-3. **Supported Variables**:
-   - Here is a list of supported variables that can be used in the templates:
-     - `project_name`: The name of the project.
-     - `milestones`: A list of milestone tasks (contains task details).
-     - `tasks`: A list of regular tasks (contains task details).
 
 ### Exporting Documents
 
@@ -111,6 +96,47 @@ This project supports exporting project reports in multiple formats, including P
      ```python
      render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html")
      ```
+
+### Template Customization
+
+This section provides guidance on how users can modify templates and customize their layout.
+
+1. **Modify Templates**:
+   - The templates for rendering project data are located in the `templates` folder. You can customize `project_template.html` and `project_template.md` to fit your styling needs.
+
+2. **Adding New Placeholders**:
+   - To add new placeholders, edit the Jinja2 templates directly. Placeholders must correspond to the keys passed in the `render_template` function. For example, if you want to display a project description, add a placeholder like `{{ project_description }}` in the template and ensure it's passed in the `render_template` call.
+
+3. **Supported Variables**:
+   - Here is a list of supported variables that can be used in the templates:
+     - `project_name`: The name of the project.
+     - `milestones`: A list of milestone tasks (contains task details).
+     - `tasks`: A list of regular tasks (contains task details).
+
+### API Integration
+
+This project utilizes the Asana API to fetch project and task data. 
+
+1. **Setup API Integration**:
+   - Ensure you have a valid Asana API token and have set it in the configuration.
+   - The integration is facilitated through the `asana_integration.py` file.
+
+2. **Authentication**:
+   - The API token must be passed with every API request for authentication. Make sure to replace the placeholder in your code.
+
+### Usage Examples
+
+- **Integrating API and Rendering**:
+   - Here’s how you can integrate fetching data from the API and rendering it to different formats:
+
+   ```python
+   api_token = "<YOUR_ASANA_API_TOKEN>"
+   workspace_id = "<YOUR_WORKSPACE_ID>"
+   project_id = "<YOUR_PROJECT_ID>"
+
+   # Fetch projects and render report
+   render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html")
+   ```
 
 ### Troubleshooting
 
