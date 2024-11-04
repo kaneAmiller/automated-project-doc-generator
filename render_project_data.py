@@ -1,6 +1,7 @@
 import json
 from jinja2 import Environment, FileSystemLoader
 from asana_integration import fetch_projects_from_asana, fetch_tasks_from_project
+import pdfkit
 
 def load_config():
     """Load configuration settings from config.json."""
@@ -66,9 +67,22 @@ def render_template(api_token, workspace_id, project_id, template_name, output_f
     print(f"Template rendered and saved to {output_filename}")
     return rendered_template
 
+def convert_html_to_pdf(html_file_path, output_pdf_path):
+    """
+    Converts an HTML file to PDF format.
+
+    :param html_file_path: Path to the HTML file to convert
+    :param output_pdf_path: Path where the output PDF will be saved
+    """
+    try:
+        pdfkit.from_file(html_file_path, output_pdf_path)
+        print(f"PDF generated successfully: {output_pdf_path}")
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+
 # Main execution for rendering both HTML and Markdown templates
 if __name__ == "__main__":
-    # Replace these placeholders with actual values if not using sample data
+    # Replace these placeholders with actual values
     api_token = "<YOUR_ASANA_API_TOKEN>"
     workspace_id = "<YOUR_WORKSPACE_ID>"
     project_id = "<YOUR_PROJECT_ID>"
@@ -77,3 +91,6 @@ if __name__ == "__main__":
     render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html", use_sample_data=True)
     # Render Markdown version with sample data
     render_template(api_token, workspace_id, project_id, template_name="project_template.md", output_format="md", use_sample_data=True)
+
+    # Convert rendered HTML to PDF
+    convert_html_to_pdf("output/project_report.html", "output/project_report.pdf")
