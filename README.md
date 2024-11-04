@@ -8,7 +8,8 @@ This project provides functions to integrate with Asana’s API, allowing you to
 3. [Configuration](#configuration)
 4. [Example Usage](#example-usage)
 5. [Template Customization](#template-customization)
-6. [Troubleshooting](#troubleshooting)
+6. [Exporting Documents](#exporting-documents)
+7. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -23,7 +24,7 @@ This project provides functions to integrate with Asana’s API, allowing you to
 2. **Install required packages**:
    The project relies on the Asana Python client and `pytest` for testing:
    ```bash
-   pip install asana pytest
+   pip install asana pytest pdfkit
    ```
 
 ### Obtaining an Asana API Key
@@ -87,6 +88,29 @@ This section provides guidance on how users can modify templates and customize t
      - `project_name`: The name of the project.
      - `milestones`: A list of milestone tasks (contains task details).
      - `tasks`: A list of regular tasks (contains task details).
+
+### Exporting Documents
+
+This project supports exporting project reports in multiple formats, including PDF, Markdown, and HTML.
+
+1. **Exporting to PDF**:
+   - Ensure that you have the necessary dependencies installed (`pdfkit` and `wkhtmltopdf`).
+   - Use the following function in your script:
+     ```python
+     convert_html_to_pdf("output/project_report.html", "output/project_report.pdf")
+     ```
+
+2. **Exporting to Markdown**:
+   - After rendering the Markdown template, save it using the `save_markdown` function:
+     ```python
+     save_markdown(rendered_markdown, "output/project_report.md")
+     ```
+
+3. **Exporting to HTML**:
+   - To export the project report as an HTML file, use the `render_template` function:
+     ```python
+     render_template(api_token, workspace_id, project_id, template_name="project_template.html", output_format="html")
+     ```
 
 ### Troubleshooting
 
